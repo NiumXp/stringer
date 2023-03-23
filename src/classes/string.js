@@ -9,6 +9,8 @@ export default class UpString extends String {
      * @type {string}
      */
     this.string = string;
+
+    this.toString();
   }
 
   /**
@@ -27,10 +29,17 @@ export default class UpString extends String {
   }
 
   /**
-   * @param {Array<Array<(RegExp | string), string>>} replacers
+   * @param {(RegExp | string)[]} replacers
+   * @example
+   * const text = new UpString("hello, world!").replaceArray(
+   *   ['o', 'a'],
+   *   ['l', 'c']
+   * );
+   *
+   * console.log(text.toString()); // hecca, warcd!
    * @returns {UpString}
    */
-  replaceArray(replacers) {
+  replaceArray(...replacers) {
     let text = this.string;
 
     // eslint-disable-next-line no-restricted-syntax, prefer-const
