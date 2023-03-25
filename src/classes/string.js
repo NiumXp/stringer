@@ -1,46 +1,27 @@
-export default class UpString extends String {
-  /**
-   * @param {string} string
-   */
-  constructor(string) {
-    super();
-
-    /**
-     * @type {string}
-     */
-    this.string = string;
-
-    this.toString();
-  }
-
+export default function LoadString() {
   /**
    * @param {boolean} lower
    * @example
-   * const text = new UpString("hello!");
-   *
-   * console.log(text.toFirstUpperCase().toString()); // Hello!
-   * @returns {UpString}
+   * console.log("hello!".toFirstUpperCase()); // Hello!
+   * @returns {string}
    */
-  toFirstUpperCase(lower) {
-    this.string = this.string[0].toUpperCase()
-      + (lower ? this.string.toLowerCase() : this.string).slice(1);
-
-    return this;
-  }
+  String.prototype.toFirstUpperCase = function toFirstUpperCase(lower) {
+    return this.slice(0, 1).toUpperCase() + (lower ? this.toLowerCase() : this).slice(1);
+  };
 
   /**
-   * @param {(RegExp | string)[]} replacers
+   * @param {Array<RegExp | string>} replacers
    * @example
-   * const text = new UpString("hello, world!").replaceArray(
+   * const text = "hello, world!".replaceArray(
    *   ['o', 'a'],
    *   ['l', 'c']
    * );
    *
-   * console.log(text.toString()); // hecca, warcd!
-   * @returns {UpString}
+   * console.log(text); // hecca, warcd!
+   * @returns {string}
    */
-  replaceArray(...replacers) {
-    let text = this.string;
+  String.prototype.replaceArray = function replaceArray(...replacers) {
+    let text = this;
 
     // eslint-disable-next-line no-restricted-syntax, prefer-const
     for (let [find, replacer] of replacers) {
@@ -49,18 +30,51 @@ export default class UpString extends String {
       text = text.replace(find, replacer);
     }
 
-    this.string = text;
+    return text;
+  };
+
+  /**
+   * @param {string} left
+   * @param {string | object} right
+   * @returns {string}
+   */
+  String.prototype.wrap = function wrap(left, right = undefined) {
+    if (this.isNullOrEmpty(left) && this.isNullOrEmpty(right)) return this;
+
+    if (typeof (right) === 'object' && Boolean(right.asHTMLTag)) {
+      return `<${left}>${this}</${left.split(' ')[0]}>`;
+    }
+
+    if (!this.isNullOrEmpty(left) && typeof (right) === 'string' && !this.isNullOrEmpty(right)) {
+      return left + this + right;
+    }
+
+    if (!this.isNullOrEmpty(left) && right === undefined) {
+      return left + this + left;
+    }
+
+    if (!this.isNullOrEmpty(left) && this.isNullOrEmpty(right)) {
+      return left + this;
+    }
+
+    if (this.isNullOrEmpty(left) && !this.isNullOrEmpty(right)) {
+      return this + right;
+    }
 
     return this;
-  }
+  };
 
-  toString() {
-    return this.string;
-  }
+  /**
+   * @param {string} string
+   * @param {boolean} useDefaultString
+   * @returns {boolean}
+   */
+  String.prototype.isNullOrEmpty = function isNullOrEmpty(string, useDefaultString = false) {
+    // eslint-disable-next-line no-param-reassign
+    if (!string && useDefaultString) string = this;
 
-  toJSON() {
-    return {
-      string: this.string,
-    };
-  }
+    return (string === null || string === undefined || string === '');
+  };
+
+  return String;
 }

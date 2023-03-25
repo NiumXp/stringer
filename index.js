@@ -1,1 +1,4 @@
-export * as UpString from './src/classes/string';
+// eslint-disable-next-line import/extensions
+import LoadString from './src/classes/string.js';
+
+LoadString();
